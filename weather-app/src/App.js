@@ -9,7 +9,7 @@ class App extends Component {
     lat: undefined,
     lon:undefined,
     city:undefined,
-    count:3,
+    count:undefined,
     temperatureC: undefined,
     temperatureF: undefined,
     icon: undefined,
@@ -31,13 +31,15 @@ getPosition = () => {
 }
 
 getWeather = async (latitude, longitude) => {
-  const api_call = await fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&cnt=3&appid=2aa0f988f542adb33292afd7f6bc517f&units=metric`);
+  const api_call = await fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&cnt=4&appid=2aa0f988f542adb33292afd7f6bc517f&units=metric`);
   const data = await api_call.json();
   console.log(data);
   this.setState({
+    key: process.env.REACT_APP_WEATHER_API_KEY,
     lat: latitude,
     lon: longitude,
     city: data.name,
+    count: 4,
     temperatureC: Math.round(data.main.temp),
     temperatureF: Math.round(data.main.temp * 1.8 + 32),
     icon: data.weather[0].icon,
@@ -45,11 +47,10 @@ getWeather = async (latitude, longitude) => {
     sunset: moment.unix(data.sys.sunset).format("hh:mm a"),
     wind: data.wind.speed,
     errorMessage: undefined,
-    wind: data.wind.speed,
-    maxC: data.main.temp_max,
-    lowC: data.main.temp_min,
-    maxF: data.main.temp_max * 1.8 + 32,
-    lowF: data.main.temp_min * 1.8 + 32,
+    maxC: Math.round(data.main.temp_max),
+    lowC: Math.round(data.main.temp_min),
+    maxF: Math.round(data.main.temp_max * 1.8 + 32),
+    lowF: Math.round(data.main.temp_min * 1.8 + 32),
     description: data.weather[0].description,
     date: undefined,
     humidity: data.main.humidity,
@@ -77,27 +78,40 @@ componentWillUnmount(){
   clearInterval(this.timeID);
 }
 render() {
-  const { city, temperatureC, temperatureF, icon, sunrise, sunset, wind, max, low, description, date, maxC, maxF, lowC, lowF, humidity} = this.state;
+  const { data,key, city, temperatureC, temperatureF, icon, sunrise, sunset, wind, max, low, description, date, maxC, maxF, lowC, lowF, humidity} = this.state;
   if (city){
     return (
       <div className="App">
 
         <div className="weather-box">
-          <div className="row">
-            <div className="col">
-         <div className="title">
-                  {city} <br />
-                <span className="sub"> {moment().format('dddd')} {moment().format('ll')} </span>
-        </div>
         
-        </div>
-
+        <div className="col">
+         <div className="title">
+                  {city} 
+          </div>
+          </div> 
+          <div className="col">
+            <div className="weather-item">
+              <span className="sub"> {moment().format('dddd')} {moment().format('LL')} </span>
+            </div> 
+          </div>
+       
+        <div className="row">
         <div className="col">
         <div className="weather-item">
-            <span>Today's High: {maxC} &deg;C</span>
+          {temperatureC} &deg;C / {temperatureF} &deg;F<br />
+          <img className="weather-icon" src={`http://openweathermap.org/img/w/${icon}.png` }alt="weather icon" />
+          <br /><span className="sub"> {description} </span><br /><br />
+        </div>
+        </div>
+</div>
+<div className="row">
+        <div className="col">
+        <div className="weather-item">
+            <span>Today's High: {maxC} &deg;C / {maxF} &deg;F</span>
         </div>
         <div className="weather-item">
-            <span>Today's Low: {lowC} &deg;C</span>
+            <span>Today's Low: {lowC} &deg;C / {lowF} &deg;F</span>
         </div>
         <div className="weather-item">
             <span>Humidity: {humidity} % </span>
@@ -115,39 +129,11 @@ render() {
           
       </div>
       </div>
-      <div className="sub-row">
-        <div className="weather-item">
-          {temperatureC} &deg;C / {temperatureF} &deg;F<br />
-          <img className="weather-icon" src={`http://openweathermap.org/img/w/${icon}.png` }alt="weather icon" />
-          <br /><span className="sub"> {description} </span><br /><br />
-        </div>
-        </div>
-      <div className="daily-row">
-                <div className="daily-col">
-                  Tuesday 25 August
-                  <div>{temperatureC} &deg;C</div>
-                <div>icon</div>
-                <div>description</div>
-                
-                </div>
-                <div className="daily-col">
-                Tuesday 25 August
-                  <div>{temperatureC} &deg;C</div>
-                <div>icon</div>
-                <div>description</div>
-                </div>
-                <div className="daily-col">
-                Tuesday 25 August
-                  <div>{temperatureC} &deg;C</div>
-                <div>icon</div>
-                <div>description</div>
-                </div>
-              </div>
+    
+     
       <footer id="footer">
             <p >&copy; Copyright 2022 <br />
-            Built with &#x2661; by  
-            <a href="https://github.com/makaylacodes/weather" target="_blank">
-             Makayla Anderson-Tucker
+            Built with &#x2661; by <a href="https://github.com/makaylacodes/weather" target="_blank"> Makayla Anderson-Tucker
         </a>
         </p>
         </footer>
