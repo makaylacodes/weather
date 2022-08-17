@@ -100,7 +100,7 @@ render() {
         <div className="col">
         <div className="weather-item">
           {temperatureC} &deg;C / {temperatureF} &deg;F<br />
-          <img className="weather-icon" src={`http://openweathermap.org/img/w/${icon}.png` }alt="weather icon" />
+          <img className="weather-icon" src={`https://openweathermap.org/img/w/${icon}.png` }alt="weather icon" />
           <br /><span className="sub"> {description} </span><br /><br />
         </div>
         </div>
